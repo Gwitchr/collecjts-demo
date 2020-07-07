@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useScript } from "./hooks";
 import logo from "./logo.svg";
+import loader from "./loader/puff.svg";
 import "./App.css";
 
 const dataKey = process.env.REACT_APP_TOKENIZATION_KEY;
@@ -18,13 +19,13 @@ function App() {
   const [messageCVV, setMessageCVV] = useState("");
 
   useEffect(() => {
-    // TODO: see if there is a better way of doing this... maybe react-helmet?
     if (scriptError) {
       console.error("Could not load collect.js");
       return;
     }
     if (scriptLoaded && !confDone) {
       // configure collect.js
+      setConfDone(true);
       window.CollectJS.configure({
         variant: "inline",
         styleSniffer: "false",
@@ -116,6 +117,7 @@ function App() {
           }
         },
         fieldsAvailableCallback: () => {
+          console.log("done");
           setConfDone(true);
         }
       });
@@ -128,29 +130,35 @@ function App() {
       </header>
       <section className="mt-5">
         <div className="container">
-          <div className="row justify-content-center">
-            <div className="col col-12 col-md-6 col-lg-4-">
-              <form action="">
-                <div className="form-group">
-                  <label htmlFor="collectjs-ccnumber">Card Number *</label>
-                  <div id="collectjs-ccnumber"></div>
-                  <span>{messageCCNumber}</span>
-                </div>
-                <div className="form-group row">
-                  <div className="col">
-                    <label htmlFor="collectjs-ccexp">Expiration *</label>
-                    <div id="collectjs-ccexp"></div>
-                    <span>{messageCCExp}</span>
+          {confDone ? (
+            <div className="row justify-content-center">
+              <div className="col col-12 col-md-6 col-lg-4-">
+                <form action="">
+                  <div className="form-group">
+                    <label htmlFor="collectjs-ccnumber">Card Number *</label>
+                    <div id="collectjs-ccnumber"></div>
+                    <span>{messageCCNumber}</span>
                   </div>
-                  <div className="col">
-                    <label htmlFor="collectjs-cvv">CVV *</label>
-                    <div id="collectjs-cvv"></div>
-                    <span>{messageCVV}</span>
+                  <div className="form-group row">
+                    <div className="col">
+                      <label htmlFor="collectjs-ccexp">Expiration *</label>
+                      <div id="collectjs-ccexp"></div>
+                      <span>{messageCCExp}</span>
+                    </div>
+                    <div className="col">
+                      <label htmlFor="collectjs-cvv">CVV *</label>
+                      <div id="collectjs-cvv"></div>
+                      <span>{messageCVV}</span>
+                    </div>
                   </div>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div>
+              <img src={loader} className="" alt="loader" />
+            </div>
+          )}
         </div>
       </section>
     </div>
